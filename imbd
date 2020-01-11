@@ -1,0 +1,25 @@
+from bs4 import BeautifulSoup
+import requests
+from twisted.python.compat import raw_input
+
+url = 'https://www.imdb.com/find?'
+
+headers={"user-agent" : 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/79.0.3945.117 Safari/537.36' ,}
+
+s = requests.Session()
+s.headers.update(headers)
+moviename = raw_input("what's the movie name : ")
+
+query = {'ref_' : 'nv_sr_fn' ,
+         'q' : moviename ,
+         's' : 'all'}
+
+
+r = s.get(url , params=query)
+soup = BeautifulSoup(r.content , "lxml" )
+
+for x in soup.findAll('div' , {"class": "findSection"}):
+    for title in x.findAll('h3' , {"class" : "findSectionHeader"}):
+        if title.text == "Titles":
+            for name in x.findAll('td' , {"class" : 'result_text'} ) :
+               print(name.text)
